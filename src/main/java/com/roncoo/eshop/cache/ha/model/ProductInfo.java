@@ -22,4 +22,8 @@ public class ProductInfo {
     private String modifiedTime;
     private Long cityId;
     private String cityName;
+    private Long brandId;
+    private String brandName;
+
+
 }

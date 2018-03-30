@@ -33,7 +33,6 @@ public class GetProductInfosCommand extends HystrixObservableCommand<ProductInfo
                     String response = HttpUtil.get(url);
                     ProductInfo productInfo = JSON.parseObject(response, ProductInfo.class);
                     observer.onNext(productInfo);
-
                 }
                 observer.onCompleted();
             } catch (Exception e) {
