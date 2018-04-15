@@ -5,10 +5,16 @@ import com.netflix.hystrix.HystrixCommand;
 import com.roncoo.eshop.cache.ha.hystrix.command.GetBrandNameCommand;
 import com.roncoo.eshop.cache.ha.hystrix.command.GetCityNameCommand;
 import com.roncoo.eshop.cache.ha.hystrix.command.GetProductInfoCommand;
+import com.roncoo.eshop.cache.ha.hystrix.command.GetProductInfosCollapser;
 import com.roncoo.eshop.cache.ha.model.ProductInfo;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
 
 /**
  * @author yangfan
@@ -86,12 +92,27 @@ public class CacheController {
 //            }
 //        });
 
+//        for (String productId : productIds.split(",")) {
+//            GetProductInfoCommand getProductInfoCommand = new GetProductInfoCommand(Long.valueOf(productId));
+//            ProductInfo productInfo = getProductInfoCommand.execute();
+//            System.out.println(productInfo);
+//            System.out.println(getProductInfoCommand.isResponseFromCache());
+//        }
+
+        List<Future<ProductInfo>> futures = new ArrayList<>();
         for (String productId : productIds.split(",")) {
-            GetProductInfoCommand getProductInfoCommand = new GetProductInfoCommand(Long.valueOf(productId));
-            ProductInfo productInfo = getProductInfoCommand.execute();
-            System.out.println(productInfo);
-            System.out.println(getProductInfoCommand.isResponseFromCache());
+            GetProductInfosCollapser getProductInfosCollapser = new GetProductInfosCollapser(Long.valueOf(productId));
+            futures.add(getProductInfosCollapser.queue());
         }
+
+        for (Future<ProductInfo> future : futures) {
+            try {
+                System.out.println("CacheController结果：" + future.get());
+            } catch (InterruptedException | ExecutionException e) {
+                e.printStackTrace();
+            }
+        }
+
         return "success";
     }
 
