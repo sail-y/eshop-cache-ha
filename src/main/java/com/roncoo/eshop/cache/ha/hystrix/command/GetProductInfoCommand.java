@@ -26,8 +26,9 @@ public class GetProductInfoCommand extends HystrixCommand<ProductInfo> {
                 .andCommandKey(KEY)
                 .andThreadPoolKey(HystrixThreadPoolKey.Factory.asKey("GetProductInfoPool"))
                 .andThreadPoolPropertiesDefaults(HystrixThreadPoolProperties.Setter()
-                        .withCoreSize(15)
-                        .withQueueSizeRejectionThreshold(10))
+                        .withCoreSize(10)
+                        .withMaxQueueSize(12)
+                        .withQueueSizeRejectionThreshold(8))
                 .andCommandPropertiesDefaults(HystrixCommandProperties.Setter()
                         // 多少个请求以上才会判断断路器是否需要开启。
                         .withCircuitBreakerRequestVolumeThreshold(30)
@@ -47,6 +48,10 @@ public class GetProductInfoCommand extends HystrixCommand<ProductInfo> {
 
         if (productId == -1) {
             throw new Exception();
+        }
+
+        if (productId == -2) {
+            Thread.sleep(3000);
         }
 
         String url = "http://localhost:8082/getProductInfo?productId=" + productId;
