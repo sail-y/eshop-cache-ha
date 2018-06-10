@@ -2,6 +2,7 @@ package com.roncoo.eshop.cache.ha.controller;
 
 import cn.hutool.http.HttpUtil;
 import com.netflix.hystrix.HystrixCommand;
+import com.roncoo.eshop.cache.ha.degrade.IsDegrade;
 import com.roncoo.eshop.cache.ha.hystrix.command.GetBrandNameCommand;
 import com.roncoo.eshop.cache.ha.hystrix.command.GetCityNameCommand;
 import com.roncoo.eshop.cache.ha.hystrix.command.GetProductInfoCommand;
@@ -9,6 +10,7 @@ import com.roncoo.eshop.cache.ha.hystrix.command.GetProductInfosCollapser;
 import com.roncoo.eshop.cache.ha.model.ProductInfo;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.ArrayList;
@@ -116,5 +118,11 @@ public class CacheController {
         return "success";
     }
 
+
+    @RequestMapping("/isDegrade")
+    public String isDegrade(boolean degrade) {
+        IsDegrade.setDegrade(degrade);
+        return "success";
+    }
 
 }
